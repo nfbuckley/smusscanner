@@ -1,0 +1,46 @@
+<html>
+<head>
+    <title>Html-Qrcode Demo</title>
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+    <script src="html5-qrcode.min.js"></script>
+    <script>
+      let students = {};
+      function init() {
+        var html5QrcodeScanner = new Html5QrcodeScanner(
+          "qr-reader", { fps: 10, qrbox: { width: 400, height: 150 } });
+        html5QrcodeScanner.render(onScanSuccess);
+
+        d3.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vR72XyYKo7-N8HheZkIAtsczbL7UW1-cF4esCvk3w5XiSGSw4kd0EQIXLUVe0fd6Fv8TWyXTtJS_IaP/pub?output=csv",
+          function (d) {
+            students[d.Id] = d;
+          });
+      }
+
+      var lastResult, countResults = 0;
+      function onScanSuccess(decodedText, decodedResult) {
+        if (decodedText !== lastResult) {
+          ++countResults;
+          lastResult = decodedText;
+          // Handle on success condition with the decoded message.
+          console.log('huh????');
+          console.log('students: ', students);
+          console.log(`Scan result ${decodedText}`, decodedResult);
+          const student = students[decodedText];
+          console.log('student: ', students[decodedText]);
+          document.getElementById('name').innerHTML = `${student.FirstName} ${student.LastName}`;
+          document.getElementById('food').innerHTML = `${student.Food}`;
+          document.getElementById('drink').innerHTML = `${student.Drink}`;
+
+        }
+      }
+    </script>
+<body onload="init()">
+<div id="qr-reader" style="width:500px"></div>
+<div id="qr-reader-results"></div>
+<div id="name"></div>
+<div id="food"></div>
+<div id="drink"></div>
+</body>
+
+</head>
+</html>
